@@ -14,7 +14,7 @@ global varDump (
 
 function getAllFolderFiles directory formatInput = (
 	dirs = getDirectories directory
-	pngs = #()
+	files = #()
 	
 	-- append subdirectories (1 depth)
 	for d in dirs do (
@@ -28,14 +28,14 @@ function getAllFolderFiles directory formatInput = (
 	-- put all files in files array
 	for d in dirs do (
 		dTemp = substituteString d "\\" "\\\\"
-		tempPngs = getFiles (d + "*." + formatInput)
+		tempFiles = getFiles (d + "*." + formatInput)
 		
-		for p in tempPngs do (
-			append pngs p
+		for p in tempFiles do (
+			append files p
 		)
 	)
 	
-	return pngs
+	return files
 )
 
 
@@ -157,20 +157,16 @@ function delFolders pathInput = (
 	)
 )
 
+-- get list of empty folders
 function getEmptyFolders directory = (
 	dirs = getDirectories directory
-	pngs = #()
 	d = directory
 
 	dTemp = substituteString d "\\" "\\\\"
-	tempPngs = getFiles (d + "*")
-	print "TEMP PNGS"
-	print tempPngs
+	tempFiles = getFiles (d + "*")
 	
 	folderEmpty = false
-	print "pngs count:"
-	print tempPngs.count
-	if (tempPngs.count < 1) then (
+	if (tempFiles.count < 1) then (
 		if (dirs.count < 1) then (
 			folderEmpty = true
 		)
