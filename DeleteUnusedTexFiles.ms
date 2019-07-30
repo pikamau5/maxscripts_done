@@ -8,7 +8,7 @@ by: Laura Koekoek | laurakoekoek91@gmail.com
 
 -- to pass variables between UI rollouts
 global varDump ( 
-	struct varDumpStruct(folder,format)
+	struct varDumpStruct(folder,format,delFolders)
 	varDump = varDumpStruct()
 )
 
@@ -34,8 +34,11 @@ function getAllFolderFiles directory formatInput = (
 			append pngs p
 		)
 	)
+	
 	return pngs
 )
+
+
 
 function getAllTextureFiles inputMaterials =
 (
@@ -66,6 +69,7 @@ function getAllTextureFiles inputMaterials =
 	return sceneFileNames;
 )
 
+-- delete unused files
 function delFiles pathInput formatInput =
 (
 	allSceneFiles = (getAllTextureFiles sceneMaterials);
@@ -128,6 +132,52 @@ function delFiles pathInput formatInput =
 	)
 )
 
+-- delete empty folders
+function delFolders pathInput = (
+
+	dir_array = GetDirectories (varDump.folder +"/*")
+	
+	-- append subdirectories (1 depth)
+	for d in dir_array do (
+		dTemp = substituteString d "\\" "\\\\"
+		subdirs = getDirectories (dTemp + "*")	
+		for sd in subdirs do (
+			append dir_array sd
+		)
+	)
+	
+	for d in dir_array do (
+		folderEmpty = (getEmptyFolders d)
+		if (folderEmpty == true ) then (
+			print "deleting empty folder:"
+			print d
+			str = "rmDir " + (d as string)
+			hiddendoscommand str startpath:"$max" exitCode:&exitcode
+		)
+	)
+)
+
+function getEmptyFolders directory = (
+	dirs = getDirectories directory
+	pngs = #()
+	d = directory
+
+	dTemp = substituteString d "\\" "\\\\"
+	tempPngs = getFiles (d + "*")
+	print "TEMP PNGS"
+	print tempPngs
+	
+	folderEmpty = false
+	print "pngs count:"
+	print tempPngs.count
+	if (tempPngs.count < 1) then (
+		if (dirs.count < 1) then (
+			folderEmpty = true
+		)
+	)
+	return folderEmpty
+)
+
 rollout confirmRollout "Are you sure?"  width:240
 (
 	label lab1 "Delete all unused"
@@ -140,6 +190,11 @@ rollout confirmRollout "Are you sure?"  width:240
 		outputFolder = substituteString varDump.folder "\\" "\\\\"
 		outputFolder = (outputFolder + "\\")
 		delFiles outputFolder varDump.format
+		
+		if (varDump.delFolders == true) then (
+			delFolders outputFolder
+		)
+		
 		destroydialog confirmRollout
 		destroydialog mainRollout
 		messageBox "Done! View log for details"
@@ -158,8 +213,13 @@ rollout mainRollout "Delete unused texture files" width:240
 		destFolderPath.text = getSavePath "Output Folder:"	
 	)
 	-- file format
-		group "Texture format" (
-		editText formatInput readonly:false  width:55 height:20 text:"PNG"
+	group "Texture format" (
+		editText formatInput readonly:false  width:55 height:20 text:"PNG" tooltip:"Leave empty to accept any format"
+	)
+	-- Additional options
+	group "Options" (
+		checkbox delFoldersCheck "Delete empty subfolders" checked:false
+		checkbox delOtherFilesCheck "Delete files that are not specified format" checked:false
 	)
 	
 	button deleteBtn "Delete unused textures" width:220 height:60
@@ -167,6 +227,7 @@ rollout mainRollout "Delete unused texture files" width:240
 		
 		varDump.folder = destFolderPath.text
 		varDump.format = formatInput.text
+		varDump.delFolders = delFoldersCheck.state
 		
 		-- some basic checks for user error
 		if (destFolderPath.text == "") then (
