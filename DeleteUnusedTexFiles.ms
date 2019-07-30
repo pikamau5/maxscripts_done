@@ -134,6 +134,30 @@ function delFiles pathInput formatInput =
 	)
 )
 
+
+rollout confirmRollout "Are you sure?"  width:240
+(
+	label lab1 "Delete all unused"
+	label lab2 varDump.format
+	label lab3 "files in folder:"
+	label lab4 varDump.folder
+
+	button deleteBtn1 "Delete" width:220 height:60
+	on deleteBtn1 pressed do (
+		
+		outputFolder = substituteString varDump.folder "\\" "\\\\"
+		outputFolder = (outputFolder + "\\")
+		
+		delFiles outputFolder varDump.format
+		destroydialog confirmRollout
+		destroydialog mainRollout
+		
+		messageBox "Done! View log for details"
+
+	)
+)
+
+
 rollout mainRollout "Delete unused texture files" width:240
 (
 	-- root folder
@@ -166,31 +190,12 @@ rollout mainRollout "Delete unused texture files" width:240
 			messageBox "Select a file format"
 		)
 		else(
+		
 			createdialog confirmRollout	
 		)	
 	)
 )
 
-rollout confirmRollout "Are you sure?"  width:240
-(
-	label lab1 "Delete all unused"
-	label lab2 varDump.format
-	label lab3 "files in folder:"
-	label lab4 varDump.folder
 
-	button deleteBtn1 "Delete" width:220 height:60
-	on deleteBtn1 pressed do (
-		
-		outputFolder = substituteString varDump.folder "\\" "\\\\"
-		outputFolder = (outputFolder + "\\")
-		
-		delFiles outputFolder varDump.format
-		destroydialog confirmRollout
-		destroydialog mainRollout
-		
-		messageBox "Done! View log for details"
-
-	)
-)
 
 createdialog mainRollout
