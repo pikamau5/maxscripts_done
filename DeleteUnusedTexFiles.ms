@@ -214,19 +214,32 @@ rollout mainRollout "Delete unused texture files" width:240
 	)
 	-- file format
 	group "Texture format" (
-		editText formatInput readonly:false  width:55 height:20 text:"PNG" tooltip:"Leave empty to accept any format"
+	
+		checkbox delOtherFilesCheck "Accept any format" checked:false
+		editText formatInput readonly:false  width:55 height:20 text:"PNG" tooltip:"set * to accept any format"
 	)
 	-- Additional options
 	group "Options" (
 		checkbox delFoldersCheck "Delete empty subfolders" checked:false
-		checkbox delOtherFilesCheck "Delete files that are not specified format" checked:false
 	)
 	
 	button deleteBtn "Delete unused textures" width:220 height:60
+	on delOtherFilesCheck changed theState do (
+		if (theState == true) then (
+			formatInput.enabled = false
+		)
+		else(
+			formatInput.enabled = true
+		)
+	)
 	on deleteBtn pressed do (
 		
-		varDump.folder = destFolderPath.text
 		varDump.format = formatInput.text
+		if (delOtherFilesCheck.state == true) then (
+			varDump.format = "*"
+		)
+		varDump.folder = destFolderPath.text
+		
 		varDump.delFolders = delFoldersCheck.state
 		
 		-- some basic checks for user error
