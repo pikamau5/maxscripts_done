@@ -178,9 +178,9 @@ function getEmptyFolders directory = (
 	return folderEmpty
 )
 
-rollout confirmRollout "Are you sure?"  width:240
+rollout confirmRollout "Are you sure?"  width:350
 (
-	label lab1 "Delete all unused"
+	label lab1 "Delete all unused "
 	label lab2 varDump.format
 	label lab3 "files in folder:"
 	label lab4 varDump.folder
@@ -215,12 +215,12 @@ rollout mainRollout "Delete unused texture files" width:240
 	-- file format
 	group "Texture format" (
 	
-		checkbox delOtherFilesCheck "Accept any format" checked:false
-		editText formatInput readonly:false  width:55 height:20 text:"PNG" tooltip:"set * to accept any format"
+		checkbox delOtherFilesCheck "Accept any format" checked:false tooltip:"Check to run the check for any file format"
+		editText formatInput readonly:false  width:55 height:20 text:"PNG" tooltip:"File format to check"
 	)
 	-- Additional options
 	group "Options" (
-		checkbox delFoldersCheck "Delete empty subfolders" checked:false
+		checkbox delFoldersCheck "Delete empty subfolders" checked:false tooltip:"Also delete any empty folders"
 	)
 	
 	button deleteBtn "Delete unused textures" width:220 height:60
