@@ -124,9 +124,9 @@ function delFiles pathInput formatInput =
 	)
 
 	print ("RemoveFiles.count = " + removeFiles.count as string)
-	print "files removed: "
 
 	for f in removeFiles do (
+		print "removed file: "
 		print f
 		deleteFile f
 	)
