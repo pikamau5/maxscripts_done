@@ -6,22 +6,20 @@ by: Laura Koekoek | laurakoekoek91@gmail.com
 
 */
 
-
-global varDump ( -- to pass variables between UI rollouts
+-- to pass variables between UI rollouts
+global varDump ( 
 	struct varDumpStruct(folder,format)
 	varDump = varDumpStruct()
 )
 
 function getAllFolderFiles directory formatInput = (
-
 	dirs = getDirectories directory
 	pngs = #()
-
+	
 	-- append subdirectories (1 depth)
 	for d in dirs do (
 		dTemp = substituteString d "\\" "\\\\"
-		subdirs = getDirectories (dTemp + "*")
-		
+		subdirs = getDirectories (dTemp + "*")	
 		for sd in subdirs do (
 			append dirs sd
 		)
@@ -64,11 +62,9 @@ function getAllTextureFiles inputMaterials =
 	
 	for p in allTextureFiles do (
 		append sceneFileNames p.filename
-	)
-	
+	)	
 	return sceneFileNames;
 )
-
 
 function delFiles pathInput formatInput =
 (
@@ -111,13 +107,11 @@ function delFiles pathInput formatInput =
 			--print "SF: " + sf as string
 			if (sf != undefined) do (
 				sf = filenameFromPath sf
-			
 			)
 			
 			if (allFolderFilesRelative[i] == sf) do (
 				print ("This file is used in scene: " + sf)
 				fileExists = true
-				
 			)
 		)
 		if (fileExists == false) do (	
@@ -134,7 +128,6 @@ function delFiles pathInput formatInput =
 	)
 )
 
-
 rollout confirmRollout "Are you sure?"  width:240
 (
 	label lab1 "Delete all unused"
@@ -144,19 +137,14 @@ rollout confirmRollout "Are you sure?"  width:240
 
 	button deleteBtn1 "Delete" width:220 height:60
 	on deleteBtn1 pressed do (
-		
 		outputFolder = substituteString varDump.folder "\\" "\\\\"
 		outputFolder = (outputFolder + "\\")
-		
 		delFiles outputFolder varDump.format
 		destroydialog confirmRollout
 		destroydialog mainRollout
-		
 		messageBox "Done! View log for details"
-
 	)
 )
-
 
 rollout mainRollout "Delete unused texture files" width:240
 (
@@ -164,14 +152,12 @@ rollout mainRollout "Delete unused texture files" width:240
 	group "Texture Root Folder" (
 		editText destFolderPath  readonly:false pos:[10,30] width:195 height:20
 		button setFolderPath "..."  pos:[210,30] width:20 height:20
-
 	)
 
 	on setFolderPath pressed do (
 		destFolderPath.text = getSavePath "Output Folder:"	
 	)
 	-- file format
-	
 		group "Texture format" (
 		editText formatInput readonly:false  width:55 height:20 text:"PNG"
 	)
@@ -195,7 +181,5 @@ rollout mainRollout "Delete unused texture files" width:240
 		)	
 	)
 )
-
-
 
 createdialog mainRollout
