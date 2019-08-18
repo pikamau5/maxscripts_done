@@ -34,14 +34,10 @@ function getAllFolderFiles directory formatInput = (
 			append files p
 		)
 	)
-	
 	return files
 )
 
-
-
-function getAllTextureFiles inputMaterials =
-(
+function getAllTextureFiles inputMaterials = (
 	local allTextureFiles = #()
 	for eachMat in inputMaterials do
 	(
@@ -52,7 +48,7 @@ function getAllTextureFiles inputMaterials =
 			(
 				join allTextureFiles (getAllTextureFiles #((getSubTexmap eachMat i)))
 			)
-			) catch ()
+		) catch ()
 			if (isProperty (getSubTexmap eachMat i) #filename) then
 			(
 				append allTextureFiles (getSubTexmap eachMat i)
@@ -60,9 +56,7 @@ function getAllTextureFiles inputMaterials =
 			)
 		)
 	)
-	
-	sceneFileNames = #()
-	
+	sceneFileNames = #()	
 	for p in allTextureFiles do (
 		append sceneFileNames p.filename
 	)	
@@ -85,34 +79,28 @@ function delFiles pathInput formatInput =
 		if (p != undefined) do (
 			p = filenameFromPath p
 		)
-		--print p
-		)
-
+	)
 	allFolderFilesRelative = #()
 		
 	--print "ALL FOLDER FILES"
 	for i = 1 to allFolderFiles.count do (
-			allFolderFilesRelative[i] = allFolderFiles[i]
-			if (allFolderFiles[i] != undefined) do (
+		allFolderFilesRelative[i] = allFolderFiles[i]
+		if (allFolderFiles[i] != undefined) do (
 			allFolderFilesRelative[i] = filenameFromPath allFolderFiles[i]
 			--print allFolderFilesRelative[i]
-			)
 		)
-
+	)
 	removeFiles = #()
-
 	print ("RemoveFiles.count = " + removeFiles.count as string)
 
 	-- do comparison
 	for i = 1 to allFolderFiles.count do (
 	fileExists = false
 		for sf in allSceneFiles do (
-			
 			--print "SF: " + sf as string
 			if (sf != undefined) do (
 				sf = filenameFromPath sf
 			)
-			
 			if (allFolderFilesRelative[i] == sf) do (
 				print ("This file is used in scene: " + sf)
 				fileExists = true
@@ -134,7 +122,6 @@ function delFiles pathInput formatInput =
 
 -- delete empty folders
 function delFolders pathInput = (
-
 	dir_array = GetDirectories (varDump.folder +"/*")
 	
 	-- append subdirectories (1 depth)
@@ -174,6 +161,7 @@ function getEmptyFolders directory = (
 	return folderEmpty
 )
 
+-- Confirm the files to delete dialog
 rollout confirmRollout "Are you sure?"  width:350
 (
 	label lab1 "Delete all unused "
@@ -197,6 +185,7 @@ rollout confirmRollout "Are you sure?"  width:350
 	)
 )
 
+-- Main ui function
 rollout mainRollout "Delete unused texture files" width:240
 (
 	-- root folder
@@ -204,13 +193,11 @@ rollout mainRollout "Delete unused texture files" width:240
 		editText destFolderPath  readonly:false pos:[10,30] width:195 height:20
 		button setFolderPath "..."  pos:[210,30] width:20 height:20
 	)
-
 	on setFolderPath pressed do (
 		destFolderPath.text = getSavePath "Output Folder:"	
 	)
 	-- file format
 	group "Texture format" (
-	
 		checkbox delOtherFilesCheck "Accept any format" checked:false tooltip:"Check to run the check for any file format"
 		editText formatInput readonly:false  width:55 height:20 text:"PNG" tooltip:"File format to check"
 	)
@@ -229,13 +216,11 @@ rollout mainRollout "Delete unused texture files" width:240
 		)
 	)
 	on deleteBtn pressed do (
-		
 		varDump.format = formatInput.text
 		if (delOtherFilesCheck.state == true) then (
 			varDump.format = "*"
 		)
 		varDump.folder = destFolderPath.text
-		
 		varDump.delFolders = delFoldersCheck.state
 		
 		-- some basic checks for user error
@@ -246,10 +231,8 @@ rollout mainRollout "Delete unused texture files" width:240
 			messageBox "Select a file format"
 		)
 		else(
-		
 			createdialog confirmRollout	
 		)	
 	)
 )
-
 createdialog mainRollout
