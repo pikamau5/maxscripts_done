@@ -12,6 +12,7 @@ global varDump (
 	varDump = varDumpStruct()
 )
 
+-- get all the files in folder
 function getAllFolderFiles directory formatInput = (
 	dirs = getDirectories directory
 	files = #()
@@ -37,6 +38,7 @@ function getAllFolderFiles directory formatInput = (
 	return files
 )
 
+-- get all texture files in max project
 function getAllTextureFiles inputMaterials = (
 	local allTextureFiles = #()
 	for eachMat in inputMaterials do
@@ -188,7 +190,7 @@ rollout confirmRollout "Are you sure?"  width:350
 -- Main ui function
 rollout mainRollout "Delete unused texture files" width:240
 (
-	-- root folder
+	-- browse for root folder
 	group "Texture Root Folder" (
 		editText destFolderPath  readonly:false pos:[10,30] width:195 height:20
 		button setFolderPath "..."  pos:[210,30] width:20 height:20
@@ -196,17 +198,15 @@ rollout mainRollout "Delete unused texture files" width:240
 	on setFolderPath pressed do (
 		destFolderPath.text = getSavePath "Output Folder:"	
 	)
-	-- file format
+	-- file format option
 	group "Texture format" (
 		checkbox delOtherFilesCheck "Accept any format" checked:false tooltip:"Check to run the check for any file format"
 		editText formatInput readonly:false  width:55 height:20 text:"PNG" tooltip:"File format to check"
 	)
-	-- Additional options
+	-- Option to also delete empty subfolders
 	group "Options" (
 		checkbox delFoldersCheck "Delete empty subfolders" checked:false tooltip:"Also delete any empty folders"
 	)
-	
-	button deleteBtn "Delete unused textures" width:220 height:60
 	on delOtherFilesCheck changed theState do (
 		if (theState == true) then (
 			formatInput.enabled = false
@@ -215,6 +215,9 @@ rollout mainRollout "Delete unused texture files" width:240
 			formatInput.enabled = true
 		)
 	)
+	-- Button to run the script
+	button deleteBtn "Delete unused textures" width:220 height:60
+	
 	on deleteBtn pressed do (
 		varDump.format = formatInput.text
 		if (delOtherFilesCheck.state == true) then (
