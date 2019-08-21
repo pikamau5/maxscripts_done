@@ -9,29 +9,22 @@ future improvements: add option to select items in the list
 function listPolys =
 (
 
-	-- collect all objects in the scene
-	local objs = for obj in objects collect obj
-
+	-- collect all objects in the selection
+	local objs = for obj in selection collect obj
 	-- store number of objects
 	local objsCount = objs.count
-
 	-- get number of poly's for all objects
 	local polys = for obj in objs collect (getPolygonCount obj)[1]
-
 	-- generate index array for sorting
 	local sortIndices = for i = 1 to objsCount collect i
-
 	-- sort
-	fn sortByPolycount a b arr: =
-	(
-		case of
-		(
+	fn sortByPolycount a b arr: =(
+		case of(
 			(arr[a] > arr[b]): -1
 			(arr[a] < arr[b]): 1
 			default: 0
 		)
 	)
-
 	-- sort by number of poly's
 	qSort sortIndices sortByPolycount arr:polys
 
@@ -39,7 +32,6 @@ function listPolys =
 	clearListener()
 	format "/*\n\tPolycounts for scene \"%\" (% objects)\n\tNumber of poly's range from % to %\n\t-----------------------------------------------\n*/\n\n" maxFileName objsCount polys[sortIndices[sortIndices.count]] polys[sortIndices[1]]
 	printArray = #()
-
 	printLine = ""
 	for i in sortIndices do (
 		printLine =  polys[i] as string + " -- " + objs[i].name as string
@@ -47,8 +39,6 @@ function listPolys =
 		print printArray
 	)
 	return printArray
-
-
 )
 
 rollout MainRollout "Polycount tracker" width:280
@@ -58,9 +48,9 @@ rollout MainRollout "Polycount tracker" width:280
 		button btn "Refresh"
 	)
 	
-	on btn pressed do
-	(
+	on btn pressed do(
 		listbox.items = listPolys()
+		
 	)	
 )
 
