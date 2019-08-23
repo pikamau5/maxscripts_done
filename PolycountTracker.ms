@@ -6,11 +6,14 @@ future improvements: add option to select items in the list
 
 */
 
+objArray = #()
+
 function listPolys =
 (
 
 	-- collect all objects in the selection
 	local objs = for obj in selection collect obj
+	objArray = objs
 	-- store number of objects
 	local objsCount = objs.count
 	-- get number of poly's for all objects
@@ -30,13 +33,13 @@ function listPolys =
 
 	-- output stats to the listener
 	clearListener()
-	format "/*\n\tPolycounts for scene \"%\" (% objects)\n\tNumber of poly's range from % to %\n\t-----------------------------------------------\n*/\n\n" maxFileName objsCount polys[sortIndices[sortIndices.count]] polys[sortIndices[1]]
+	-- format "/*\n\tPolycounts for scene \"%\" (% objects)\n\tNumber of poly's range from % to %\n\t-----------------------------------------------\n*/\n\n" maxFileName objsCount polys[sortIndices[sortIndices.count]] polys[sortIndices[1]]
 	printArray = #()
 	printLine = ""
 	for i in sortIndices do (
 		printLine =  polys[i] as string + " -- " + objs[i].name as string
 		append printArray printLine
-		print printArray
+		--	print printArray
 	)
 	return printArray
 )
@@ -45,6 +48,15 @@ rollout MainRollout "Polycount tracker" width:280
 (
 	group "Top polycounts" (
 		MultiListBox listbox items:#("Click refresh to create list") height:35
+		on listbox selectionEnd do (
+			-- format "selectionEnd: %\n" listbox.selection
+			--print objArray[listbox.selection]
+			max select none
+			for lb in listbox.selection do (
+				selectmore objArray[lb]
+			)
+			
+		)
 		button btn "Refresh"
 	)
 	
