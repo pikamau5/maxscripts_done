@@ -13,7 +13,7 @@ function listPolys =
 
 	-- collect all objects in the selection
 	local objs = for obj in selection collect obj
-	objArray = objs
+	
 	-- store number of objects
 	local objsCount = objs.count
 	-- get number of poly's for all objects
@@ -35,12 +35,14 @@ function listPolys =
 	clearListener()
 	-- format "/*\n\tPolycounts for scene \"%\" (% objects)\n\tNumber of poly's range from % to %\n\t-----------------------------------------------\n*/\n\n" maxFileName objsCount polys[sortIndices[sortIndices.count]] polys[sortIndices[1]]
 	printArray = #()
+	objArray = #()
 	printLine = ""
 	for i in sortIndices do (
 		printLine =  polys[i] as string + " -- " + objs[i].name as string
 		append printArray printLine
-		--	print printArray
+		append objArray objs[i] 
 	)
+	
 	return printArray
 )
 
